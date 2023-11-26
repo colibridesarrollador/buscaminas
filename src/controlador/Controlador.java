@@ -54,29 +54,13 @@ public class Controlador implements ActionListener, MouseListener {
 
 		// INICIACION DE OBJETOS
 		puntuacion = 0.0f;
-		jugador = new Jugador();
+		
 		jugadores = new ArrayList<Jugador>();
-		//musicaPartidaPerdida = new Musica("partida_perdida.wav");
-		//musicaPartidaGanada = new Musica("partida_ganada.wav");
-		
-		
 		fecha = LocalDate.now();
 		reloj = new Reloj();
 		iniciarReloj();
 		musicaRegistro = activarMusica(new Musica("registro.wav"), vista.getChckbxNewCheckBoxMusica().isSelected());
-		
-
-		// INICIACION DE ESCUCHADORES
-		vista.getBtnNewButtonComenzarPartida().addActionListener(this);
-		vista.getBtnNewButtonInformacion().addActionListener(this);
-		vista.getBtnNewButtonVolverInfo().addActionListener(this);
-		vista.getChckbxNewCheckBoxMusica().addActionListener(this);
-		vista.getChckbxMsicaMusicaRegistro().addActionListener(this);
-		vista.getChckbxNewCheckBoxMusicaResultados().addActionListener(this);
-		vista.getBtnNewButtonResultadosVolverInicio().addActionListener(this);
-		vista.getBtnNewButtonMostrarMarcadoresResultados().addActionListener(this);
-		vista.getListRsultadosLista().addMouseListener(this);
-
+		iniciarEscuchadores();
 	}
 
 	@Override
@@ -84,7 +68,7 @@ public class Controlador implements ActionListener, MouseListener {
 
 		//BOTON JUGAR(comenzar partida)
 		if (e.getSource() == vista.getBtnNewButtonComenzarPartida()) {
-
+			jugador = new Jugador();
 			numCasillasAbiertas = 0;
 			
 
@@ -93,12 +77,11 @@ public class Controlador implements ActionListener, MouseListener {
 				juego();
 				paraMusica(musicaRegistro);
 				musicaPartida = activarMusica(new Musica("partida.wav"), vista.getChckbxNewCheckBoxMusica().isSelected());
-				controlCheckBox(vista.getChckbxMsicaMusicaRegistro().isSelected(),vista.getChckbxNewCheckBoxMusicaTablero());
-				ocultarPaneles(vista.getPanelRegistro(),vista.getPanelTablero());
 				
 				// RECOGER DATOS DEL JUGADOR (en este caso solo coge el nombre)	
+				controlCheckBox(vista.getChckbxMsicaMusicaRegistro().isSelected(),vista.getChckbxNewCheckBoxMusicaTablero());
+				ocultarPaneles(vista.getPanelRegistro(),vista.getPanelTablero());
 				jugador.setNombre(vista.getTextFieldNombre().getText());
-				limpiarRegistros();
 			}
 
 		//BOTÖN IR AL PANEL INFORMACIÓN
@@ -138,14 +121,13 @@ public class Controlador implements ActionListener, MouseListener {
 		}else if (e.getSource() == vista.getChckbxNewCheckBoxMusicaResultados()) {
 
 			if(vista.getChckbxNewCheckBoxMusicaResultados().isSelected()) {
-				
 					reproducirMusicaActual(musicaPartidaGanada);
 					reproducirMusicaActual(musicaPartidaPerdida);
-						
+					reproducirMusicaActual(musicaPartida);		
 				} else {
 					pausarMusica(musicaPartidaGanada);
 					pausarMusica(musicaPartidaPerdida);
-					
+					pausarMusica(musicaPartida);
 				}
 			
  
@@ -164,57 +146,53 @@ public class Controlador implements ActionListener, MouseListener {
 		
 		} else if (e.getSource() == vista.getBtnNewButtonAbandonarPartida()) {
 
-			
-			
-			calcularPuntuacion();
+			controlCheckBox(vista.getChckbxNewCheckBoxMusicaTablero().isSelected(),vista.getChckbxNewCheckBoxMusicaResultados());
 			ocultarPaneles(vista.getPanelTablero(),vista.getPanelResultados());
 
 			
 			partidaGanada = partidaGanada();
-			String resultado = vista.getLblNewLabelAvisosPartida().getText();
+			String mensaje = vista.getLblNewLabelAvisosPartida().getText();
 
-			System.out.println(resultado);
 			
 			if (partidaGanada) {
-				vista.getLblNewLabelMensajeResultado().setForeground(Color.green);
-				vista.getLblNewLabelMensajeResultado().setText(resultado);
-			} else if (resultado.equals("")) {
-				vista.getLblNewLabelMensajeResultado().setForeground(Color.red);
-				vista.getLblNewLabelMensajeResultado().setText("Vuelve a intentarlo, no te desanimes¡¡");
+				vista.getAvisoResultados().setForeground(Color.green);
+				vista.getAvisoResultados().setText(mensaje);
+			} else if (!partidaGanada) {
+				
+				vista.getAvisoResultados().setForeground(Color.red);
+				vista.getAvisoResultados().setText(mensaje);
 			} else {
-				vista.getLblNewLabelMensajeResultado().setForeground(Color.red);
-				vista.getLblNewLabelMensajeResultado().setText(resultado);
-
+				vista.getAvisoResultados().setForeground(Color.red);
+				vista.getAvisoResultados().setText("GRACIAS POR JUGA"+jugador.getNombre()+", VUELVE A INTENTARLO CUANDO QUIERAS¡¡");
 			}
 
-			/*
-			 * RECOGE LOS DATOS DE LA PARTIDA Y LOS GUARDA EN EL OBJETO JUGADOR CREADO EN EL
-			 * REGISTRO
-			 */
+			calcularPuntuacion();
+			mostrarDatosPartida();
 
-			// MUESTRA EL JUGADOR ACTUAL Y SUS MARCAS EN PUNTOS Y TIEMPO
-			vista.getLblNewLabelResultadosJugador().setText(jugador.getNombre());
-			vista.getLblNewLabelResultadosPuntuacion().setText("" + jugador.getPuntuacion());
-			vista.getLblNewLabelResultadoTiempoTrancurrido().setText(jugador.getTiempoTranscurrido());
-
-			// SE GUARDA EL JUGADOR EN UN ARRAY JUGADORES
-			jugadores.add(jugador);
+			
 
 		//BOTONO VOLVER A PANEL INICIAL DESDE RESULTADOS
 		} else if (e.getSource() == vista.getBtnNewButtonResultadosVolverInicio()) {
 
-			if (musicaPartidaGanada != null)
-				musicaPartidaGanada.parar();
-			if (musicaPartidaPerdida != null)
-				musicaPartidaPerdida.parar();
+			controlCheckBox(vista.getChckbxNewCheckBoxMusicaResultados().isSelected(),vista.getChckbxMsicaMusicaRegistro());
+			
+			restablecerVistaListaResultados();
+			
+			
+			paraMusica(musicaPartidaGanada);
+			paraMusica(musicaPartidaPerdida);
+			paraMusica(musicaPartida);
+			
 			
 			ocultarPaneles(vista.getPanelResultados(),vista.getPanelRegistro());
 			
-			musicaRegistro = activarMusica(new Musica("registro.wav"), vista.getChckbxNewCheckBoxMusicaResultados().isSelected());
+			musicaRegistro = activarMusica(new Musica("registro.wav"), vista.getChckbxNewCheckBoxMusicaTablero().isSelected());
+			
+			// SE GUARDA EL JUGADOR EN UN ARRAY JUGADORES
+			
 			
 		//BOTON MOSTRAR RESULTADOS DEL PANEL RESULTADOS
 		} else if (e.getSource() == vista.getBtnNewButtonMostrarMarcadoresResultados()) {
-
 			mostrarResultadosEnJList();
 		}
 
@@ -229,8 +207,8 @@ public class Controlador implements ActionListener, MouseListener {
 			
 		} else if (e.getClickCount() == 2) {
 
-			// RECOGE LOS VALORES DE UN JUGADOR SELECCIONADO EN EL JLIST Y LOS MUESTRA
-			recogerDatosJugador();
+			String nombre = vista.getListRsultadosLista().getSelectedValue().toString();
+			recogerDatosJugador(nombre);
 
 		}
 
@@ -259,6 +237,19 @@ public class Controlador implements ActionListener, MouseListener {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
+	
+	
+	
+	//MODULACIÓN DEL PROGRAMA:-----------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	private void restablecerVistaListaResultados() {
+		vista.getBtnNewButtonMostrarMarcadoresResultados().setEnabled(true);
+		vista.getListRsultadosLista().setVisible(false);
+	}
+	
+	
 	private void reproducirMusicaActual(Musica musica) {
 		if(musica != null)
 			musica.reproducir();
@@ -269,7 +260,13 @@ public class Controlador implements ActionListener, MouseListener {
 			musica.detener();
 
 	}
+	private void paraMusica(Musica musica) {
+		if (musica != null) {
+	        musica.parar();
+	    }
+	}
 	
+	//EXTRAE LA POSICON DEL BOTON EN STRING Y LA CONVIERTE A ENTERO (se lo pasa al método 'celdaSeleccionada')
 	private void extraerPosicionText(JButton btn) {
 		
 		String[] posicion = btn.getName().split(",");
@@ -281,16 +278,18 @@ public class Controlador implements ActionListener, MouseListener {
 
 	}
 	
+	//MUESTRA LA LISTA DE JUGADORES Y SUS PUNTUACIONES
 	private void mostrarResultadosEnJList() {
 		vista.getListaNombres().removeAllElements();
 		// MUESTRA EL JLIST
 		vista.getListRsultadosLista().setVisible(true);
+		// DESACTIVA EL BOTON VER LISTADO
+		vista.getBtnNewButtonMostrarMarcadoresResultados().setEnabled(false);
 		// CARGA LOS NOMBRES EN EL JLIS
 		for (int i = 0; i < jugadores.size(); i++) {
 			vista.getListaNombres().insertElementAt(jugadores.get(i).getNombre(), i);
+			System.out.println(jugadores.get(i).getNombre());
 		}
-		// DESACTIVA EL BOTON VER LISTADO
-		vista.getBtnNewButtonMostrarMarcadoresResultados().setEnabled(false);
 
 	}
 	
@@ -329,9 +328,9 @@ public class Controlador implements ActionListener, MouseListener {
 
 	}
 	
-	// RECOGE LOS DATOS DEL JUGADORE ACTUAL
-	private void recogerDatosJugador() {
-		String nombre = vista.getListRsultadosLista().getSelectedValue().toString();
+	// RECOGE LOS DATOS DEL JUGADOR SELECCIONADO EN LA LISTA Y MUESTRA SUS PUNTUACIONES
+	private void recogerDatosJugador(String nombre) {
+		
 		int pos = 0;
 
 		for (int i = 0; i < jugadores.size(); i++) {
@@ -341,7 +340,7 @@ public class Controlador implements ActionListener, MouseListener {
 		vista.getLblNewLabelResultadosJugador().setText(jugadores.get(pos).getNombre());
 		vista.getLblNewLabelResultadoTiempoTrancurrido().setText(jugadores.get(pos).getTiempoTranscurrido());
 		vista.getLblNewLabelResultadosPuntuacion().setText("" + jugadores.get(pos).getPuntuacion());
-
+		
 	}
 
 	//VALIDA LOS CAMPOS DEL REGISTRO TRUE SI SON CORRECTOS Y FALSE SI NO
@@ -377,19 +376,20 @@ public class Controlador implements ActionListener, MouseListener {
 
 			jugador.setTiempoTranscurrido(tiempoTranscurrido);
 			jugador.setPuntuacion(Float.parseFloat(puntuacionConPunto));
-
+			
+			jugador.setNombre(vista.getTextFieldNombre().getText());
+			jugadores.add(jugador);
+			limpiarRegistros();
 		} else {
 			jugador.setPuntuacion(0);
+			jugadores.add(jugador);
+			limpiarRegistros();
 		}
-
+			
 	}
 	
-	private void paraMusica(Musica musica) {
-		if (musica != null) {
-	        musica.parar();
-	    }
 
-	}
+	
 	private Musica activarMusica(Musica musica,boolean checkActivado) {
 		if(checkActivado) {
 			musica.reproducir();
@@ -492,6 +492,7 @@ public class Controlador implements ActionListener, MouseListener {
 	 * System.out.println(); } System.out.println("-----"); }
 	 */
 
+	//MËTODO RECURSIVO QUE VALIDA SI ES UNA MINA Y SI NO HAY CASILLAS QUE TENGAN MINAS ALRDERDOR (se desactivan todos los botones hasta llegar a uno que tiene minas alrededor)
 	public void celdaSeleccionada(int pF, int pC) {
 
 		DecimalFormat df = new DecimalFormat("#.00");
@@ -507,17 +508,23 @@ public class Controlador implements ActionListener, MouseListener {
 					btn = celdas[i][j];
 
 					if (casillas[i][j].isMina()) {
-						ImageIcon minaIcon = new ImageIcon(getClass().getResource("/imagenes/mina.png"));
-						Image image = minaIcon.getImage();
-						Image newImage = image.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+					    ImageIcon minaIcon = new ImageIcon(getClass().getResource("/imagenes/mina.png"));
+					    Image image = minaIcon.getImage();
 
-						// Crear un ImageIcon con la imagen ajustada
-						ImageIcon minaIconCentrado = new ImageIcon(newImage);
+					    // Sin escalado (comentar la línea de escalado)
+					    // Image newImage = image;
 
-						// Establecer la imagen ajustada y centrada como ícono del botón
-						btn.setIcon(minaIconCentrado);
-						btn.setHorizontalTextPosition(SwingConstants.CENTER);
-						btn.setVerticalTextPosition(SwingConstants.CENTER);
+					    // Algoritmo de escalado alternativo (puedes probar otros algoritmos)
+					    Image newImage = image.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+
+					    // Crear un ImageIcon con la imagen ajustada
+					    ImageIcon minaIconCentrado = new ImageIcon(newImage);
+
+					    // Establecer la imagen ajustada y centrada como ícono del botón
+					    btn.setIcon(minaIconCentrado);
+					    btn.setHorizontalTextPosition(SwingConstants.CENTER);
+					    btn.setVerticalTextPosition(SwingConstants.CENTER);
+					
 					} else {
 						if (casillas[i][j].getNumMinasAlrededor() > 0) {
 							// Si hay al menos una mina alrededor, establecer el número en color verde
@@ -536,7 +543,7 @@ public class Controlador implements ActionListener, MouseListener {
 
 			vista.desabilitarTablero();
 			cronometro.detener();
-			vista.getLblNewLabelAvisosPartida().setText("HAS TOCADO UNA MINA¡¡ Perdiste¡¡");
+			vista.getLblNewLabelAvisosPartida().setText("HAS TOCADO UNA MINA "+jugador.getNombre()+"¡¡ Perdiste¡¡");
 			vista.getBtnNewButtonAbandonarPartida().setText("CONTINUAR");
 			if (vista.getChckbxNewCheckBoxMusicaTablero().isSelected()) {
 				musicaPartida.parar();
@@ -574,7 +581,7 @@ public class Controlador implements ActionListener, MouseListener {
 						cronometro.detener();
 						// Cambiar el texto del JLabel
 						vista.getLblNewLabelAvisosPartida().setForeground(Color.GREEN);
-						vista.getLblNewLabelAvisosPartida().setText("HAS GANADO LA PARTIDA¡¡ ENHORABUENA¡¡");
+						vista.getLblNewLabelAvisosPartida().setText("HAS GANADO LA PARTIDA "+jugador.getNombre()+"¡¡ ENHORABUENA¡¡");
 						vista.getBtnNewButtonAbandonarPartida().setText("CONTINUAR");
 						if (vista.getChckbxNewCheckBoxMusicaTablero().isSelected()) {
 							musicaPartida.parar();
@@ -598,7 +605,7 @@ public class Controlador implements ActionListener, MouseListener {
 					cronometro.detener();
 					// Cambiar el texto del JLabel:
 					vista.getLblNewLabelAvisosPartida().setForeground(Color.GREEN);
-					vista.getLblNewLabelAvisosPartida().setText("HAS GANADO LA PARTIDA¡¡ ENHORABUENA¡¡");
+					vista.getLblNewLabelAvisosPartida().setText("HAS GANADO  LA PARTIDA "+jugador.getNombre()+"¡¡ ENHORABUENA¡¡");
 					vista.getBtnNewButtonAbandonarPartida().setText("CONTINUAR");
 					if (vista.getChckbxNewCheckBoxMusicaTablero().isSelected()) {
 						musicaPartida.parar();
@@ -664,4 +671,29 @@ public class Controlador implements ActionListener, MouseListener {
 	 * System.out.println(); } 
 	 * }
 	 */
+	private void mostrarDatosPartida() {
+
+		// MUESTRA EL JUGADOR ACTUAL Y SUS MARCAS EN PUNTOS Y TIEMPO
+		vista.getLblNewLabelResultadosJugador().setText(jugador.getNombre());
+		vista.getLblNewLabelResultadosPuntuacion().setText("" + jugador.getPuntuacion());
+		vista.getLblNewLabelResultadoTiempoTrancurrido().setText(jugador.getTiempoTranscurrido());
+
+
+	}
+	// INICIACION DE ESCUCHADORES
+	private void iniciarEscuchadores() {
+				vista.getBtnNewButtonComenzarPartida().addActionListener(this);
+				vista.getBtnNewButtonInformacion().addActionListener(this);
+				vista.getBtnNewButtonVolverInfo().addActionListener(this);
+				vista.getChckbxNewCheckBoxMusica().addActionListener(this);
+				vista.getChckbxMsicaMusicaRegistro().addActionListener(this);
+				vista.getChckbxNewCheckBoxMusicaResultados().addActionListener(this);
+				vista.getBtnNewButtonResultadosVolverInicio().addActionListener(this);
+				vista.getBtnNewButtonMostrarMarcadoresResultados().addActionListener(this);
+				vista.getListRsultadosLista().addMouseListener(this);
+
+
+	}
+	
 }
+

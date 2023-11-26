@@ -66,6 +66,7 @@ public class Vista extends JFrame {
 	private JTextField textFieldFilas;
 	private JTextField textFieldMinas;
 	private JLabel lblNewLabelPuntuacionTablero;
+	private JLabel avisoResultados;
 
 	/**
 	 * Launch the application.
@@ -100,10 +101,92 @@ public class Vista extends JFrame {
 		ImageIcon imagenFondoResultados = new ImageIcon(getClass().getResource("/imagenes/img_resultados.png"));
 		ImageIcon imagenFondoIinfo = new ImageIcon(getClass().getResource("/imagenes/img_info.png"));
 		ImageIcon imagenFondoRegistro = new ImageIcon(getClass().getResource("/imagenes/img_registro.png"));
+		listaNombres = new DefaultListModel<>();
 
-		
-		
-		
+		// FONDO INFO
+
+		panelResultados = new JPanel();
+		panelResultados.setBounds(-2, 0, 968, 644);
+		panelResultados.setLayout(null);
+		contentPane.add(panelResultados);
+
+		avisoResultados = new JLabel("New label");
+		avisoResultados.setHorizontalAlignment(SwingConstants.CENTER);
+		avisoResultados.setFont(new Font("Tahoma", Font.BOLD, 35));
+		avisoResultados.setForeground(new Color(255, 255, 255));
+		avisoResultados.setBounds(10, 27, 937, 57);
+		panelResultados.add(avisoResultados);
+
+		JLabel lblNewLabel_8 = new JLabel("Puntuación:");
+		lblNewLabel_8.setForeground(new Color(255, 255, 255));
+		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabel_8.setBounds(259, 416, 162, 18);
+		panelResultados.add(lblNewLabel_8);
+
+		JLabel lblNewLabel_10 = new JLabel("Tiempo Transcurrido:");
+		lblNewLabel_10.setForeground(new Color(255, 255, 255));
+		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabel_10.setBounds(259, 375, 230, 17);
+		panelResultados.add(lblNewLabel_10);
+
+		chckbxNewCheckBoxMusicaResultados = new JCheckBox("Música");
+		chckbxNewCheckBoxMusicaResultados.setSelected(true);
+		chckbxNewCheckBoxMusicaResultados.setBounds(0, 6, 87, 21);
+		panelResultados.add(chckbxNewCheckBoxMusicaResultados);
+
+		lblNewLabelResultadoTiempoTrancurrido = new JLabel("");
+		lblNewLabelResultadoTiempoTrancurrido.setForeground(new Color(255, 255, 255));
+		lblNewLabelResultadoTiempoTrancurrido.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabelResultadoTiempoTrancurrido.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabelResultadoTiempoTrancurrido.setBounds(508, 375, 204, 17);
+		panelResultados.add(lblNewLabelResultadoTiempoTrancurrido);
+
+		lblNewLabelResultadosPuntuacion = new JLabel("");
+		lblNewLabelResultadosPuntuacion.setForeground(new Color(255, 255, 255));
+		lblNewLabelResultadosPuntuacion.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabelResultadosPuntuacion.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabelResultadosPuntuacion.setBounds(508, 416, 204, 18);
+		panelResultados.add(lblNewLabelResultadosPuntuacion);
+
+		btnNewButtonResultadosVolverInicio = new JButton("Volver INICIO");
+		btnNewButtonResultadosVolverInicio.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnNewButtonResultadosVolverInicio.setBounds(789, 602, 169, 32);
+		panelResultados.add(btnNewButtonResultadosVolverInicio);
+
+		btnNewButtonMostrarMarcadoresResultados = new JButton("Mostrar marcadores");
+		btnNewButtonMostrarMarcadoresResultados.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnNewButtonMostrarMarcadoresResultados.setBounds(10, 602, 282, 32);
+		panelResultados.add(btnNewButtonMostrarMarcadoresResultados);
+		listRsultadosLista = new JList(listaNombres);
+		listRsultadosLista.setEnabled(true);
+		listRsultadosLista.setBounds(94, 155, 342, 142);
+		listRsultadosLista.setVisible(false);
+		panelResultados.add(listRsultadosLista);
+
+		JLabel lblNewLabel_11 = new JLabel("Jugador: ");
+		lblNewLabel_11.setForeground(new Color(255, 255, 255));
+		lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabel_11.setBounds(259, 338, 164, 19);
+		panelResultados.add(lblNewLabel_11);
+
+		lblNewLabelResultadosJugador = new JLabel("");
+		lblNewLabelResultadosJugador.setForeground(new Color(255, 255, 255));
+		lblNewLabelResultadosJugador.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabelResultadosJugador.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabelResultadosJugador.setBounds(508, 338, 204, 19);
+		panelResultados.add(lblNewLabelResultadosJugador);
+
+		// IMAGEN RESULTADOS
+		JLabel lblNewLabelFondoResultado = new JLabel(imagenFondoResultados);
+		lblNewLabelFondoResultado.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblNewLabelFondoResultado.setBounds(0, 0, 968, 644);
+		panelResultados.add(lblNewLabelFondoResultado);
+
+		JLabel avisosResultado = new JLabel("New label");
+		avisosResultado.setBounds(234, 27, 513, 57);
+		panelResultados.add(avisosResultado);
+		panelResultados.setVisible(false);
+
 		// PANEL INFO
 		panelInfo = new JPanel();
 		panelInfo.setLayout(null);
@@ -280,80 +363,6 @@ public class Vista extends JFrame {
 		lblNewLabelMensajeResultado.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabelMensajeResultado.setFont(new Font("Tahoma", Font.PLAIN, 20));
 
-		// FONDO INFO
-
-		panelResultados = new JPanel();
-		panelResultados.setBounds(-2, 0, 968, 644);
-		panelResultados.setLayout(null);
-		contentPane.add(panelResultados);
-
-		JLabel lblNewLabel_8 = new JLabel("Puntuación:");
-		lblNewLabel_8.setForeground(new Color(255, 255, 255));
-		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel_8.setBounds(259, 416, 162, 18);
-		panelResultados.add(lblNewLabel_8);
-
-		JLabel lblNewLabel_10 = new JLabel("Tiempo Transcurrido:");
-		lblNewLabel_10.setForeground(new Color(255, 255, 255));
-		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel_10.setBounds(259, 375, 230, 17);
-		panelResultados.add(lblNewLabel_10);
-
-		chckbxNewCheckBoxMusicaResultados = new JCheckBox("Música");
-		chckbxNewCheckBoxMusicaResultados.setSelected(true);
-		chckbxNewCheckBoxMusicaResultados.setBounds(0, 6, 87, 21);
-		panelResultados.add(chckbxNewCheckBoxMusicaResultados);
-
-		lblNewLabelResultadoTiempoTrancurrido = new JLabel("");
-		lblNewLabelResultadoTiempoTrancurrido.setForeground(new Color(255, 255, 255));
-		lblNewLabelResultadoTiempoTrancurrido.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabelResultadoTiempoTrancurrido.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabelResultadoTiempoTrancurrido.setBounds(508, 375, 204, 17);
-		panelResultados.add(lblNewLabelResultadoTiempoTrancurrido);
-
-		lblNewLabelResultadosPuntuacion = new JLabel("");
-		lblNewLabelResultadosPuntuacion.setForeground(new Color(255, 255, 255));
-		lblNewLabelResultadosPuntuacion.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabelResultadosPuntuacion.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabelResultadosPuntuacion.setBounds(508, 416, 204, 18);
-		panelResultados.add(lblNewLabelResultadosPuntuacion);
-
-		btnNewButtonResultadosVolverInicio = new JButton("Volver INICIO");
-		btnNewButtonResultadosVolverInicio.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButtonResultadosVolverInicio.setBounds(789, 602, 169, 32);
-		panelResultados.add(btnNewButtonResultadosVolverInicio);
-
-		btnNewButtonMostrarMarcadoresResultados = new JButton("Mostrar marcadores");
-		btnNewButtonMostrarMarcadoresResultados.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButtonMostrarMarcadoresResultados.setBounds(10, 602, 282, 32);
-		panelResultados.add(btnNewButtonMostrarMarcadoresResultados);
-
-		listaNombres = new DefaultListModel<>();
-		listRsultadosLista = new JList(listaNombres);
-		listRsultadosLista.setEnabled(true);
-		listRsultadosLista.setBounds(328, 153, 342, 142);
-		listRsultadosLista.setVisible(false);
-		panelResultados.add(listRsultadosLista);
-
-		JLabel lblNewLabel_11 = new JLabel("Jugador: ");
-		lblNewLabel_11.setForeground(new Color(255, 255, 255));
-		lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel_11.setBounds(259, 338, 164, 19);
-		panelResultados.add(lblNewLabel_11);
-
-		lblNewLabelResultadosJugador = new JLabel("");
-		lblNewLabelResultadosJugador.setForeground(new Color(255, 255, 255));
-		lblNewLabelResultadosJugador.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabelResultadosJugador.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabelResultadosJugador.setBounds(508, 338, 204, 19);
-		panelResultados.add(lblNewLabelResultadosJugador);
-
-		// IMAGEN RESULTADOS
-		JLabel lblNewLabelFondoResultado = new JLabel(imagenFondoResultados);
-		lblNewLabelFondoResultado.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblNewLabelFondoResultado.setBounds(0, 0, 968, 644);
-		panelResultados.add(lblNewLabelFondoResultado);
-		panelResultados.setVisible(false);
 
 	}
 
@@ -472,6 +481,10 @@ public class Vista extends JFrame {
 	public JLabel getLblNewLabelFecha() {
 		return lblNewLabelFecha;
 	}
+	
+	public JLabel getAvisoResultados() {
+		return avisoResultados;
+	}
 
 	public JLabel getLblNewLabelHora() {
 		return lblNewLabelHora;
@@ -572,7 +585,6 @@ public class Vista extends JFrame {
 		panelTablero.add(lblNewLabelFondoTablero);
 	}
 
-	
 	public void desabilitarTablero() {
 		for (int i = 0; i < celdas.length; i++) {
 			for (int j = 0; j < celdas.length; j++) {
